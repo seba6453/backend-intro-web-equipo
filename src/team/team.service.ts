@@ -9,7 +9,7 @@ import { randomCaracter } from 'src/config/randomCaracter';
 import { User } from 'src/schema/user.schema';
 import { decodeToken } from 'src/config/token';
 import { fetchUserOtherBackend } from 'src/microserviceLogin/getUser';
-import { CreateUserTeamDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 
 @Injectable()
@@ -64,12 +64,13 @@ export class TeamService {
   }
 
   async addUser(email: string, uniqueCode: string, token: string) {
-    var userNew: CreateUserTeamDto;
+    var userNew: CreateUserDto;
     try{
       userNew = await fetchUserOtherBackend(token,email);
     }catch(error){
       throw new HttpException('Usuario no existe en el sistema', HttpStatus.NOT_ACCEPTABLE);
     }
+    delete userNew._id;
   
     // Verificar si el usuario ya existe en el equipo
     const team = await this.teamModel.findOne({ uniqueCode, 'listUser.email': userNew.email });

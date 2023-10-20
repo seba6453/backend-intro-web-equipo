@@ -9,13 +9,13 @@ export class Team {
   @Prop({ auto: true })
   teamID: number;
   
-  @Prop({ unique: true, trim: true, required: true })
+  @Prop({ unique: false, trim: true, required: true })
   name: string;
 
   @Prop({ unique: false, trim: true, required: true })
   autor: string;
 
-  @Prop({ type: [UserSchema], default: [], required: false, unique: true, sparse: true })
+  @Prop({ type: [UserSchema], default: [], required: false, sparse: true, unique: true })
   listUser: User[];
 
   @Prop({ unique: true, trim: true, required: true })

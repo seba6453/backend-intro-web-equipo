@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/
 import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
-import { CreateUserTeamDto } from './dto/create-user.dto';
+import { CreateUserTeamDto } from './dto/create-user-team.dto';
 
 @Controller('team')
 export class TeamController {
