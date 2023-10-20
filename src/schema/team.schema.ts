@@ -9,7 +9,7 @@ export class Team {
   @Prop({ auto: true })
   teamID: number;
   
-  @Prop({ unique: false, trim: true, required: true })
+  @Prop({ unique: true, trim: true, required: true })
   name: string;
 
   @Prop({ unique: false, trim: true, required: true })
