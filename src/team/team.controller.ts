@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/
 import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
+import { CreateUserTeamDto } from './dto/create-user.dto';
 
 @Controller('team')
 export class TeamController {
@@ -9,13 +10,14 @@ export class TeamController {
 
   @Post()
   create(@Body() createTeamDto: CreateTeamDto, @Req() request: Request) {
-    const token = request.headers['authorization'];
+    const token = request.headers['authorization'].split(" ")[1];
     return this.teamService.create(createTeamDto, token);
   }
 
   @Get()
-  findAll() {
-    return this.teamService.findAll();
+  findAll(@Req() request: Request) {
+    const token = request.headers['authorization'].split(" ")[1];
+    return this.teamService.findAll(token);
   }
 
   @Get(':uniquecode')
@@ -31,5 +33,16 @@ export class TeamController {
   @Delete(':uniquecode')
   remove(@Param('uniquecode') uniquecode: string) {
     return this.teamService.remove(uniquecode);
+  }
+
+  @Post('adduser')
+  addUser(@Body() data: CreateUserTeamDto, @Req() request: Request) {
+    const token = request.headers['authorization'].split(" ")[1];
+    return this.teamService.addUser(data.email,data.uniqueCode,token);
+  }
+
+  @Post('remove-user/:uniqueCode/:email')
+  removeUser(@Param('uniqueCode') uniqueCode: string, @Param('email') email: string) {
+    return this.teamService.removeUser(email, uniqueCode);
   }
 }

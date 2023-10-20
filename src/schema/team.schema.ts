@@ -15,7 +15,7 @@ export class Team {
   @Prop({ unique: false, trim: true, required: true })
   autor: string;
 
-  @Prop({ type: [UserSchema] ,default: [], required: false })
+  @Prop({ type: [UserSchema], default: [], required: false, unique: true, sparse: true })
   listUser: User[];
 
   @Prop({ unique: true, trim: true, required: true })
