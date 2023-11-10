@@ -59,8 +59,26 @@ export class TeamService {
     return `This action updates a #${id} team`;
   }
 
-  async remove(uniqueCode: string) {
-    return await this.teamModel.deleteOne({ uniqueCode });
+  async remove(uniqueCode: string, token: string) {
+    const user: User = await decodeToken(token,this.jwtService);
+    
+    const team = await this.teamModel.findOne({ uniqueCode });
+  
+    if (!team) {
+      throw new HttpException('No se encontró el equipo', HttpStatus.NOT_FOUND);
+    }
+  
+    if (team.autor !== user.userName) {
+      throw new HttpException('No tiene permiso para eliminar este equipo', HttpStatus.UNAUTHORIZED);
+    }
+  
+    const result = await this.teamModel.deleteOne({ uniqueCode });
+  
+    if (result.deletedCount > 0) {
+      return result;
+    } else {
+      throw new HttpException('Error al eliminar el equipo', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async addUser(email: string, uniqueCode: string, token: string) {

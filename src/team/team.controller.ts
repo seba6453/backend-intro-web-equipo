@@ -31,8 +31,9 @@ export class TeamController {
   }
 
   @Delete(':uniquecode')
-  remove(@Param('uniquecode') uniquecode: string) {
-    return this.teamService.remove(uniquecode);
+  remove(@Param('uniquecode') uniquecode: string, @Req() request: Request) {
+    const token = request.headers['authorization'].split(" ")[1];
+    return this.teamService.remove(uniquecode,token);
   }
 
   @Post('adduser')
