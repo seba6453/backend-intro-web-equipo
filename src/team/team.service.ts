@@ -8,7 +8,7 @@ import { Model } from 'mongoose';
 import { randomCaracter } from 'src/config/randomCaracter';
 import { User } from 'src/schema/user.schema';
 import { decodeToken } from 'src/config/token';
-import { fetchUserOtherBackend } from 'src/microserviceLogin/getUser';
+import { fetchUserOtherBackend } from 'src/fetchMicroService/getUser';
 import { CreateUserDto } from './dto/create-user.dto';
 
 
