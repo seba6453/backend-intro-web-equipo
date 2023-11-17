@@ -51,8 +51,13 @@ export class TeamService {
     return await this.teamModel.find({ 'listUser.email': email });
   }
 
-  async findOne(uniqueCode: string) {
-    return await this.teamModel.findOne({ uniqueCode });
+  async findOne(uniqueCode: string, token: string) {
+    const user: User = await decodeToken(token, this.jwtService);
+    if (!user || typeof user !== 'object') {
+      throw new Error('Token inválido o no contiene información del usuario.');
+    }
+    
+    return await this.teamModel.findOne({ uniqueCode: uniqueCode });
   }
 
   async update(id: number, updateTeamDto: UpdateTeamDto) {
