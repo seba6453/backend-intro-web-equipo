@@ -21,13 +21,15 @@ export class TeamController {
   }
 
   @Get(':uniquecode')
-  findOne(@Param('uniquecode') uniquecode: string) {
-    return this.teamService.findOne(uniquecode);
+  findOne(@Param('uniquecode') uniquecode: string, @Req() request: Request) {
+    const token = request.headers['authorization'].split(" ")[1];
+    return this.teamService.findOne(uniquecode, token);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
-    return this.teamService.update(+id, updateTeamDto);
+  update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto, @Req() request: Request) {
+    const token = request.headers['authorization'].split(" ")[1];
+    return this.teamService.update(id, updateTeamDto, token);
   }
 
   @Delete(':uniquecode')

@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { RolService } from './rol.service';
 import { CreateRolDto } from './dto/create-rol.dto';
+import { BodyRol } from './dto/body-rol.dto';
 
 
 
@@ -11,17 +12,20 @@ export class RolController {
     ){}
 
     @Get()
-    findAll(){
-        return this.rolService.getAll();
+    findAll(@Body() bodyRol: BodyRol, @Req() request: Request){
+        const token = request.headers['authorization'].split(" ")[1];
+        return this.rolService.getAllByProyect(bodyRol.id_team,token);
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string ){
-        return this.rolService.findOneId(id);
+    findOne(@Param('id') id: string, @Req() request: Request){
+        const token = request.headers['authorization'].split(" ")[1];
+        return this.rolService.findOneId(id, token);
     }
 
     @Post()
-    createRol(@Body() newRol: CreateRolDto) {
-        return this.rolService.create(newRol);
+    createRol(@Body() newRol: CreateRolDto, @Req() request: Request) {
+        const token = request.headers['authorization'].split(" ")[1];
+        return this.rolService.create(newRol, token);
     }
 }

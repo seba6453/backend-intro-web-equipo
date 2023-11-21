@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/schema/user.schema';
+import { User } from 'src/team/entities/user.entity';
 
 export function decodeToken(token: string, jwtService: JwtService): User {
 
