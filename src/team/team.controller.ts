@@ -3,11 +3,16 @@ import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { CreateUserTeamDto } from './dto/create-user-team.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('Team')
+@ApiBearerAuth()
 @Controller('team')
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
+  @ApiOperation({ summary: 'Crea un nuevo equipo' })
   @Post()
   create(@Body() createTeamDto: CreateTeamDto, @Req() request: Request) {
     const token = request.headers['authorization'].split(" ")[1];
