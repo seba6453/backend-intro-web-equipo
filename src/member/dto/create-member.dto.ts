@@ -15,5 +15,5 @@ export class CreateMemberDto {
 
     @IsString()
     @IsNotEmpty()
-    id_rol: string;
+    rol: string;
 }

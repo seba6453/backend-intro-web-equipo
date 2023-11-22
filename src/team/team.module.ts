@@ -16,6 +16,7 @@ import { RolModule } from 'src/rol/rol.module';
     global: true,
     secret: jwtConstants.secret,
     signOptions: { expiresIn: '1 days'},
-  }),MemberModule, RolModule]
+  }),MemberModule, RolModule],
+  exports: [TeamService]
 })
 export class TeamModule {}

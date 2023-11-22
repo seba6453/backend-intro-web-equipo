@@ -14,8 +14,10 @@ export class Member {
   @Prop({ required: true, ref: 'Team' })
   id_team: string;
 
-  @Prop({ required: true, ref: 'Rol' })
-  id_rol: string;
+  @Prop({ default: null, ref: 'Rol' })
+  rol: string;
 }
 
 export const MemberSchema = SchemaFactory.createForClass(Member);
+
+MemberSchema.index({ rol: 1, id_team: 1, userName: 1, email: 1}, { unique: true });

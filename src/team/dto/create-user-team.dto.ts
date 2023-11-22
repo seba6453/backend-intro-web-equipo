@@ -1,9 +1,9 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateUserTeamDto {
+export class CreateMemberReques {
     @IsNotEmpty()
     @IsString()
-    uniqueCode: string
+    uniqueCode: string;
 
     @IsEmail()
     @IsNotEmpty()

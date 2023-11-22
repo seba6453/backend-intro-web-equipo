@@ -12,59 +12,69 @@ import { Team } from './entities/team.entity';
 import { RolService } from 'src/rol/rol.service';
 import { Rol } from 'src/rol/entity/rol.entity';
 import { HttpStatusCode } from 'axios';
-
+import { DeleteMemberDto } from 'src/member/dto/delete-member.dto';
+import { CreateMemberReques } from './dto/create-user-team.dto';
 
 @Injectable()
 export class TeamService {
-
   constructor(
     private jwtService: JwtService,
     @InjectModel(Team.name) private readonly teamModel: Model<Team>,
     private readonly memberService: MemberService,
-    private readonly rolService: RolService
-  ){}
+    private readonly rolService: RolService,
+  ) {}
 
   async create(createTeamDto: CreateTeamDto, token: string) {
-    const user: User = decodeToken(token,this.jwtService);
+    const user: User = decodeToken(token, this.jwtService);
     if (!user || typeof user !== 'object') {
-        throw new Error('Token inválido o no contiene información del usuario.');
+      throw new Error('Token inválido o no contiene información del usuario.');
     }
 
-    var uniqueCode = ""
+    var uniqueCode = '';
     do {
       uniqueCode = randomCaracter(6);
     } while (await this.teamModel.findOne({ uniqueCode }));
 
     const teamNew: Team = await this.teamModel.create({
-        name: createTeamDto.name,
-        uniqueCode: uniqueCode,
-        autor: user.userName
+      name: createTeamDto.name,
+      uniqueCode: uniqueCode,
+      autor: user.userName,
     });
 
-    const rol: Rol = await this.rolService.create({id_team: teamNew.id, name: "Lider"}, token);
+    const rol: Rol = await this.rolService.create(
+      { id_team: teamNew.id, name: 'Lider' },
+      token,
+    );
 
-    try{
-      await this.memberService.createMember({userName: user.userName, email: user.email, id_team: teamNew.id, id_rol: rol.id});
+    try {
+      await this.memberService.createMember({
+        userName: user.userName,
+        email: user.email,
+        id_team: teamNew.id,
+        rol: rol.name,
+      });
       return teamNew;
-      
-    }catch {
-      await this.teamModel.deleteOne({_id: teamNew.id});
+    } catch {
+      await this.teamModel.deleteOne({ _id: teamNew.id });
       await this.rolService.delete(rol.id, token);
-      return new HttpException('No se ha creado el equipo', HttpStatusCode.BadRequest);
+      return new HttpException(
+        'No se ha creado el equipo',
+        HttpStatusCode.BadRequest,
+      );
     }
-
-
   }
 
   async findAll(token: string) {
-    const user: User = decodeToken(token,this.jwtService);
+    const user: User = decodeToken(token, this.jwtService);
     if (!user || typeof user !== 'object') {
-        throw new Error('Token inválido o no contiene información del usuario.');
+      throw new Error('Token inválido o no contiene información del usuario.');
     }
 
-    const listMember = await this.memberService.getMembersByUserName(user.userName);
+    const listMember = await this.memberService.getMembersByUserName(
+      user.userName,
+    );
 
-    const teamsId = listMember.map(member => member.id_team);
+    const teamsId = listMember.map((member) => member.id_team);
     console.log(teamsId);
 
     return await this.teamModel.find({ _id: { $in: teamsId } });
@@ -73,17 +83,20 @@ export class TeamService {
   async findOne(uniqueCode: string, token: string) {
     const decodedToken = this.jwtService.decode(token);
     if (!decodedToken || typeof decodedToken !== 'object') {
-        throw new Error('Token inválido o no contiene información del usuario.');
+      throw new Error('Token inválido o no contiene información del usuario.');
     }
-    return this.teamModel.findOne({uniqueCode: uniqueCode});
-}
+    return this.teamModel.findOne({ uniqueCode: uniqueCode });
+  }
 
-  async update(id: string, updateTeamDto: UpdateTeamDto, token: string){
+  async update(id: string, updateTeamDto: UpdateTeamDto, token: string) {
     const decodedToken = this.jwtService.decode(token);
     if (!decodedToken || typeof decodedToken !== 'object') {
-        throw new Error('Token inválido o no contiene información del usuario.');
+      throw new Error('Token inválido o no contiene información del usuario.');
     }
-    const updateResult: UpdateResult = await this.teamModel.updateOne({ _id: id }, updateTeamDto);
+    const updateResult: UpdateResult = await this.teamModel.updateOne(
+      { _id: id },
+      updateTeamDto,
+    );
     if (updateResult.modifiedCount === 1) {
       return { message: 'Equipo actualizado exitosamente', statusCode: 200 };
     } else {
@@ -94,11 +107,13 @@ export class TeamService {
   async remove(uniqueCode: string, token: string) {
     const decodedToken = this.jwtService.decode(token);
     if (!decodedToken || typeof decodedToken !== 'object') {
-        throw new Error('Token inválido o no contiene información del usuario.');
+      throw new Error('Token inválido o no contiene información del usuario.');
     }
-    const team: Team = await this.teamModel.findOne({uniqueCode: uniqueCode});
+    const team: Team = await this.teamModel.findOne({ uniqueCode: uniqueCode });
 
-    const deleteResponse: DeleteResponse = await this.teamModel.deleteOne({uniqueCode: uniqueCode});
+    const deleteResponse: DeleteResponse = await this.teamModel.deleteOne({
+      uniqueCode: uniqueCode,
+    });
     if (deleteResponse.deletedCount === 1) {
       await this.memberService.deleteByTeam(team.id);
       await this.rolService.deleteByTeam(team.id);
@@ -108,10 +123,46 @@ export class TeamService {
     }
   }
 
-  async addUser(email: string, uniqueCode: string, token: string) {
+  async getMemberByTeam(id_team: string, token: string) {
+    const decodedToken = this.jwtService.decode(token);
+    if (!decodedToken || typeof decodedToken !== 'object') {
+      throw new Error('Token inválido o no contiene información del usuario.');
+    }
+    return this.memberService.getMemberByTeam(id_team);
   }
 
-  async removeUser(email: string, uniqueCode: string) {
+  async addMemberTeam(data: CreateMemberReques, token: string) {
+    const decodedToken = this.jwtService.decode(token);
+    if (!decodedToken || typeof decodedToken !== 'object') {
+      throw new Error('Token inválido o no contiene información del usuario.');
+    }
+
+    const team: Team = await this.teamModel.findOne({
+      uniqueCode: data.uniqueCode,
+    });
+
+    return await this.memberService.addMemberTeam(team.id, data.email, token);
   }
-  
+
+  async removeMember(data: DeleteMemberDto, token: string) {
+    const decodedToken = this.jwtService.decode(token);
+    if (!decodedToken || typeof decodedToken !== 'object') {
+      throw new Error('Token inválido o no contiene información del usuario.');
+    }
+
+    const team: Team = await this.teamModel.findOne({
+      uniqueCode: data.uniqueCode,
+    });
+
+    const deleteResponse: DeleteResponse = await this.memberService.removeMember(team.id, data.email);
+
+    if (deleteResponse.deletedCount === 1) {
+      await this.memberService.deleteByTeam(team.id);
+      await this.rolService.deleteByTeam(team.id);
+
+      return { message: 'Miembro eliminado exitosamente', statusCode: 200 };
+    } else {
+      return { message: 'No se pudo eliminar el Miembro', statusCode: 404 };
+    }
+  }
 }
