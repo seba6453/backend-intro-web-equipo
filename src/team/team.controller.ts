@@ -71,4 +71,10 @@ export class TeamController {
       const token = request.headers['authorization'].split(" ")[1];
       return await this.teamService.getMemberByTeam(id_team, token);
   }
+
+  @Get('teamfree/:id_proyect')
+  async getTeamsFreeByProyect(@Param('id_proyect') id_proyect: string, @Req() request: Request) {
+      const token = request.headers['authorization'].split(" ")[1];
+      return await this.teamService.getTeamsFreeByProyect(id_proyect, token);
+  }
 }

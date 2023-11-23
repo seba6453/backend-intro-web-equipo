@@ -14,6 +14,8 @@ import { Rol } from 'src/rol/entity/rol.entity';
 import { HttpStatusCode } from 'axios';
 import { DeleteMemberDto } from 'src/member/dto/delete-member.dto';
 import { CreateMemberReques } from './dto/create-user-team.dto';
+import { fetchTeamsOtherBackend } from 'src/fetchMicroService/getTeams';
+import { TeamProyect } from './entities/teamProyect.entity';
 
 @Injectable()
 export class TeamService {
@@ -64,7 +66,7 @@ export class TeamService {
     }
   }
 
-  async findAll(token: string) {
+  async findAll(token: string): Promise<Team[]> {
     const user: User = decodeToken(token, this.jwtService);
     if (!user || typeof user !== 'object') {
       throw new Error('Token inválido o no contiene información del usuario.');
@@ -75,7 +77,6 @@ export class TeamService {
     );
 
     const teamsId = listMember.map((member) => member.id_team);
-    console.log(teamsId);
 
     return await this.teamModel.find({ _id: { $in: teamsId } });
   }
@@ -164,5 +165,21 @@ export class TeamService {
     } else {
       return { message: 'No se pudo eliminar el Miembro', statusCode: 404 };
     }
+  }
+
+  async getTeamsFreeByProyect(id_proyect: string, token: string){
+    const decodedToken = this.jwtService.decode(token);
+    if (!decodedToken || typeof decodedToken !== 'object') {
+      throw new Error('Token inválido o no contiene información del usuario.');
+    }
+
+    const listTeamsProyect: TeamProyect[] = await fetchTeamsOtherBackend(token, id_proyect);
+
+    const listTeams: Team[] = await this.findAll(token);
+    
+
+    const teamsFree = listTeams.filter(team => !listTeamsProyect.some(proyectTeam => proyectTeam.name === team.name));
+
+    return teamsFree;
   }
 }
