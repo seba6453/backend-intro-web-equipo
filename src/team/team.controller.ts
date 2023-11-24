@@ -73,12 +73,16 @@ export class TeamController {
       return await this.teamService.getMemberByTeam(id_team, token);
   }
 
+  @ApiTags('Team')
+  @ApiOperation({ summary: 'Obtiene todos los equipos sin asignar a un proyecto en especifico' })
   @Get('teamfree/:id_proyect')
   async getTeamsFreeByProyect(@Param('id_proyect') id_proyect: string, @Req() request: Request) {
       const token = request.headers['authorization'].split(" ")[1];
       return await this.teamService.getTeamsFreeByProyect(id_proyect, token);
   }
 
+  @ApiTags('Member')
+  @ApiOperation({ summary: 'Asigna un rol a un miembro de un equipo' })
   @Post('member/assingrol/:id_team')
   async assignRol(@Param('id_team') id_team: string,@Body() data: AssingRolMemberDto, @Req() request: Request) {
       const token = request.headers['authorization'].split(" ")[1];

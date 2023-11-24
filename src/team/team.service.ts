@@ -17,6 +17,8 @@ import { CreateMemberReques } from './dto/create-user-team.dto';
 import { fetchTeamsOtherBackend } from 'src/fetchMicroService/getTeams';
 import { TeamProyect } from './entities/teamProyect.entity';
 import { AssingRolMemberDto } from 'src/member/dto/assing-rol-member.dto';
+import { deleteTeamsByName } from 'src/fetchMicroService/deleteTeamMany';
+import { updateTeamByName } from 'src/fetchMicroService/updateTeamMany';
 
 @Injectable()
 export class TeamService {
@@ -95,11 +97,13 @@ export class TeamService {
     if (!decodedToken || typeof decodedToken !== 'object') {
       throw new Error('Token inválido o no contiene información del usuario.');
     }
+    const team: Team = await this.teamModel.findOne({_id:id});
     const updateResult: UpdateResult = await this.teamModel.updateOne(
       { _id: id },
       updateTeamDto,
     );
     if (updateResult.modifiedCount === 1) {
+      await updateTeamByName(token, team.name, updateTeamDto.name);
       return { message: 'Equipo actualizado exitosamente', statusCode: 200 };
     } else {
       return { message: 'No se pudo actualizar el equipo', statusCode: 404 };
@@ -119,6 +123,7 @@ export class TeamService {
     if (deleteResponse.deletedCount === 1) {
       await this.memberService.deleteByTeam(team.id);
       await this.rolService.deleteByTeam(team.id);
+      await deleteTeamsByName(token, team.name);
       return { message: 'Equipo eliminado exitosamente', statusCode: 200 };
     } else {
       return { message: 'No se pudo eliminar el equipo', statusCode: 404 };
