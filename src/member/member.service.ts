@@ -38,6 +38,7 @@ export class MemberService {
   }
 
   async removeMember(id_team: string, email: string) {
+    console.log({ id_team: id_team, email: email });
     return this.memberModel.deleteMany({ id_team: id_team, email: email });
   }
 }

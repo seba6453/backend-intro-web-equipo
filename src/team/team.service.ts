@@ -158,8 +158,6 @@ export class TeamService {
     const deleteResponse: DeleteResponse = await this.memberService.removeMember(team.id, data.email);
 
     if (deleteResponse.deletedCount === 1) {
-      await this.memberService.deleteByTeam(team.id);
-      await this.rolService.deleteByTeam(team.id);
 
       return { message: 'Miembro eliminado exitosamente', statusCode: 200 };
     } else {
