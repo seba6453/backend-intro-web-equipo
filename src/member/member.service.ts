@@ -38,7 +38,10 @@ export class MemberService {
   }
 
   async removeMember(id_team: string, email: string) {
-    console.log({ id_team: id_team, email: email });
     return this.memberModel.deleteMany({ id_team: id_team, email: email });
+  }
+
+  async assignRol(nameRol: string, emailMember: string, id_team: string) {
+    return await this.memberModel.updateOne({email: emailMember, id_team: id_team}, {rol: nameRol});
   }
 }

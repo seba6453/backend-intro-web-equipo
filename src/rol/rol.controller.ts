@@ -18,7 +18,7 @@ export class RolController {
     @Get()
     findAll(@Body() bodyRol: BodyRol, @Req() request: Request){
         const token = request.headers['authorization'].split(" ")[1];
-        return this.rolService.getAllByProyect(bodyRol.id_team,token);
+        return this.rolService.getAllByTeam(bodyRol.id_team,token);
     }
 
     @ApiOperation({ summary: 'Obtiene 1 rol' })

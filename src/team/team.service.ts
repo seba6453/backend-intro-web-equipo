@@ -16,6 +16,7 @@ import { DeleteMemberDto } from 'src/member/dto/delete-member.dto';
 import { CreateMemberReques } from './dto/create-user-team.dto';
 import { fetchTeamsOtherBackend } from 'src/fetchMicroService/getTeams';
 import { TeamProyect } from './entities/teamProyect.entity';
+import { AssingRolMemberDto } from 'src/member/dto/assing-rol-member.dto';
 
 @Injectable()
 export class TeamService {
@@ -179,5 +180,15 @@ export class TeamService {
     const teamsFree = listTeams.filter(team => !listTeamsProyect.some(proyectTeam => proyectTeam.name === team.name));
 
     return teamsFree;
+  }
+
+  async assignRol(id_team: string,data: AssingRolMemberDto, token: string) {
+    const decodedToken = this.jwtService.decode(token);
+    if (!decodedToken || typeof decodedToken !== 'object') {
+      throw new Error('Token inválido o no contiene información del usuario.');
+    }
+    const rol: Rol = await this.rolService.findOneId(data.id_rol, token);
+
+    return await this.memberService.assignRol(rol.name,data.emailMember, id_team);
   }
 }

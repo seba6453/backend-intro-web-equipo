@@ -5,6 +5,7 @@ import { UpdateTeamDto } from './dto/update-team.dto';
 import { CreateMemberReques } from './dto/create-user-team.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeleteMemberDto } from 'src/member/dto/delete-member.dto';
+import { AssingRolMemberDto } from 'src/member/dto/assing-rol-member.dto';
 
 
 @ApiTags('Team')
@@ -76,5 +77,11 @@ export class TeamController {
   async getTeamsFreeByProyect(@Param('id_proyect') id_proyect: string, @Req() request: Request) {
       const token = request.headers['authorization'].split(" ")[1];
       return await this.teamService.getTeamsFreeByProyect(id_proyect, token);
+  }
+
+  @Post('member/assingrol/:id_team')
+  async assignRol(@Param('id_team') id_team: string,@Body() data: AssingRolMemberDto, @Req() request: Request) {
+      const token = request.headers['authorization'].split(" ")[1];
+      return await this.teamService.assignRol(id_team, data, token);
   }
 }

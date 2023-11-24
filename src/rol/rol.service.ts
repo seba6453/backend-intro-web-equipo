@@ -12,7 +12,7 @@ export class RolService {
         private readonly jwtService: JwtService
     ){}
 
-    async getAllByProyect(id_team: string, token: string) {
+    async getAllByTeam(id_team: string, token: string) {
         const decodedToken = this.jwtService.decode(token);
         if (!decodedToken || typeof decodedToken !== 'object') {
             throw new Error('Token inválido o no contiene información del usuario.');
