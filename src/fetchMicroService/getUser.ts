@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { linkMSAuth } from 'src/config/constants';
 
 export async function fetchUserOtherBackend(token: string, email: string) {
   try {
@@ -8,7 +9,7 @@ export async function fetchUserOtherBackend(token: string, email: string) {
     };
 
 
-    const response = await axios.get(`http://localhost:3000/user/${email}`, { headers });
+    const response = await axios.get(linkMSAuth + `/${email}`, { headers });
 
     return response.data;
   } catch (error) {

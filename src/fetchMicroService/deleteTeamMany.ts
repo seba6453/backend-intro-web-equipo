@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { linkMSProyect } from 'src/config/constants';
 
 export async function deleteTeamsByName(token: string, nameteam: string) {
   try {
@@ -7,7 +8,7 @@ export async function deleteTeamsByName(token: string, nameteam: string) {
       'Content-Type': 'application/json',
     };
 
-    const response = await axios.post(`http://localhost:3002/proyect/teams/${nameteam}`, {}, { headers });
+    const response = await axios.post(linkMSProyect + `/teams/${nameteam}`, {}, { headers });
 
     return response.data;
   } catch (error) {
