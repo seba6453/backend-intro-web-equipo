@@ -8,7 +8,7 @@ export async function deleteTeamsByName(token: string, nameteam: string) {
       'Content-Type': 'application/json',
     };
 
-    const response = await axios.post(linkMSProyect + `/teams/${nameteam}`, {}, { headers });
+    const response = await axios.post(linkMSProyect.secret + `/teams/${nameteam}`, {}, { headers });
 
     return response.data;
   } catch (error) {

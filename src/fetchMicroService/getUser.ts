@@ -9,7 +9,7 @@ export async function fetchUserOtherBackend(token: string, email: string) {
     };
 
 
-    const response = await axios.get(linkMSAuth + `/${email}`, { headers });
+    const response = await axios.get(linkMSAuth.secret + `/${email}`, { headers });
 
     return response.data;
   } catch (error) {

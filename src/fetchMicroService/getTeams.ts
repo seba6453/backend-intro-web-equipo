@@ -9,7 +9,7 @@ export async function fetchTeamsOtherBackend(token: string, id_proyect: string) 
     };
 
 
-    const response = await axios.get(linkMSProyect + `/teams/${id_proyect}`, { headers });
+    const response = await axios.get(linkMSProyect.secret + `/teams/${id_proyect}`, { headers });
 
     return response.data;
   } catch (error) {

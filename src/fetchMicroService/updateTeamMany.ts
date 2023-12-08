@@ -8,7 +8,7 @@ export async function updateTeamByName(token: string, nameteam: string, newName:
       'Content-Type': 'application/json',
     };
 
-    const response = await axios.patch(linkMSProyect + `/team/${nameteam}`, {name: newName}, { headers });
+    const response = await axios.patch(linkMSProyect.secret + `/team/${nameteam}`, {name: newName}, { headers });
 
     return response.data;
   } catch (error) {
