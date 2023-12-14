@@ -12,34 +12,18 @@ export class RolController {
     constructor(private rolService: RolService) {}
 
     @ApiOperation({ summary: 'Obtiene todos los roles de un equipo' })
-    @Get()
-    async findAll(@Body() bodyRol: BodyRol, @Req() request: Request) {
+    @Get(':id_team')
+    async findAll(@Param('id_team') id_team: string, @Req() request: Request) {
         try {
             const token = request.headers['authorization']?.split(" ")[1];
             if (!token) {
                 throw new HttpException('Token de autorización no proporcionado', HttpStatusCode.Unauthorized);
             }
             
-            return await this.rolService.getAllByTeam(bodyRol.id_team, token);
+            return await this.rolService.getAllByTeam(id_team, token);
         } catch (error) {
             console.error('Error en findAll:', error);
             throw new HttpException('No fue posible obtener los roles', HttpStatusCode.BadRequest);
-        }
-    }
-
-    @ApiOperation({ summary: 'Obtiene 1 rol' })
-    @Get(':id')
-    async findOne(@Param('id') id: string, @Req() request: Request) {
-        try {
-            const token = request.headers['authorization']?.split(" ")[1];
-            if (!token) {
-                throw new HttpException('Token de autorización no proporcionado', HttpStatusCode.Unauthorized);
-            }
-
-            return await this.rolService.findOneId(id, token);
-        } catch (error) {
-            console.error('Error en findOne:', error);
-            throw new HttpException('No fue posible obtener el rol', HttpStatusCode.BadRequest);
         }
     }
 

@@ -17,6 +17,7 @@ export class RolService {
         if (!decodedToken || typeof decodedToken !== 'object') {
             throw new Error('Token inválido o no contiene información del usuario.');
         }
+        console.log(id_team);
         return await this.rolModel.find({id_team: id_team}).exec();
     }
 
