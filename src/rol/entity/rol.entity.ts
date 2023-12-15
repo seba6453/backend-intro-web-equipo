@@ -1,5 +1,4 @@
 export class Rol {
-    id: string;
+    _id: string;
     name: string;
-    id_team: string;
 }

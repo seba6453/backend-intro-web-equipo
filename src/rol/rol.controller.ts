@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, HttpException, Param, Post, Req } from '@nestjs/common';
 import { RolService } from './rol.service';
 import { CreateRolDto } from './dto/create-rol.dto';
-import { BodyRol } from './dto/body-rol.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { HttpStatusCode } from 'axios';
 
@@ -12,15 +11,15 @@ export class RolController {
     constructor(private rolService: RolService) {}
 
     @ApiOperation({ summary: 'Obtiene todos los roles de un equipo' })
-    @Get(':id_team')
-    async findAll(@Param('id_team') id_team: string, @Req() request: Request) {
+    @Get()
+    async findAll(@Req() request: Request) {
         try {
             const token = request.headers['authorization']?.split(" ")[1];
             if (!token) {
                 throw new HttpException('Token de autorización no proporcionado', HttpStatusCode.Unauthorized);
             }
             
-            return await this.rolService.getAllByTeam(id_team, token);
+            return await this.rolService.getAll(token);
         } catch (error) {
             console.error('Error en findAll:', error);
             throw new HttpException('No fue posible obtener los roles', HttpStatusCode.BadRequest);

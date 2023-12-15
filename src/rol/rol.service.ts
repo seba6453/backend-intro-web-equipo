@@ -12,21 +12,30 @@ export class RolService {
         private readonly jwtService: JwtService
     ){}
 
-    async getAllByTeam(id_team: string, token: string): Promise<Rol[]> {
+    async getAll(token: string): Promise<Rol[]> {
         const decodedToken = this.jwtService.decode(token);
         if (!decodedToken || typeof decodedToken !== 'object') {
             throw new Error('Token inválido o no contiene información del usuario.');
         }
-        console.log(id_team);
-        return await this.rolModel.find({id_team: id_team}).exec();
+        return await this.rolModel.find().exec();
     }
 
-    async findOneId(id: string, token: string){
+    async findOneName(name: string, token: string): Promise<Rol>{
         const decodedToken = this.jwtService.decode(token);
         if (!decodedToken || typeof decodedToken !== 'object') {
             throw new Error('Token inválido o no contiene información del usuario.');
         }
-        return await this.rolModel.findById(id);
+        const rol: Rol = await this.rolModel.findOne({name: name}).exec();
+        return rol;
+    }
+
+    async findOneId(id: string, token: string): Promise<Rol>{
+        const decodedToken = this.jwtService.decode(token);
+        if (!decodedToken || typeof decodedToken !== 'object') {
+            throw new Error('Token inválido o no contiene información del usuario.');
+        }
+        const rol: Rol = await this.rolModel.findOne({_id: id}).exec();
+        return rol;
     }
 
     async create(rol: CreateRolDto, token: string): Promise<Rol> {

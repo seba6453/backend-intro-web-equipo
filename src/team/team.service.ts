@@ -46,10 +46,7 @@ export class TeamService {
       autor: user.userName,
     });
 
-    const rol: Rol = await this.rolService.create(
-      { id_team: teamNew.id, name: 'Lider' },
-      token,
-    );
+    const rol: Rol = await this.rolService.findOneName('Lider', token);
 
     try {
       await this.memberService.createMember({
@@ -61,7 +58,6 @@ export class TeamService {
       return teamNew;
     } catch {
       await this.teamModel.deleteOne({ _id: teamNew.id });
-      await this.rolService.delete(rol.id, token);
       return new HttpException(
         'No se ha creado el equipo',
         HttpStatusCode.BadRequest,

@@ -5,11 +5,9 @@ export type RolDocument = HydratedDocument<Rol>;
 
 @Schema()
 export class Rol {
-  @Prop({ required: true, trim: true })
+  @Prop({ required: true, trim: true, unique: true })
   name: string;
 
-  @Prop({ required: true, ref: 'Team' })
-  id_team: string;
 }
 
 
